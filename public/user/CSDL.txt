@@ -1,0 +1,77 @@
+create database baomatweb;
+use baomatweb;
+create table user(
+	UserID int not null,
+	UserName varchar(30) unique,
+	Password varchar(30),
+	CartID int not null,
+	RoleID int not null
+);
+alter table user add constraint pk_user primary key (UserID);
+
+create table Cart(
+	CartID int not null,
+	TongTien numeric(10,2)
+	
+);
+alter table Cart add constraint pk_cart primary key(cartID);
+alter table user add constraint fk_UserToCart foreign key (CartID) references Cart(CartID) on delete cascade;
+create table Role(	RoleID int not null,	RoleName varchar(20));
+alter table Role add constraint pk_role primary key (RoleID);
+alter table user
+add constraint fk_usertorole foreign key (RoleID) references Role(RoleID) on delete cascade;
+create table ProductType(
+	TypeID int not null,
+	TypeName nvarchar(20)
+);
+alter table ProductType add constraint pk_producttype primary key (TypeID);
+create table Brand(
+	BrandID int not null,
+	BrandName nvarchar(30)
+);
+
+alter table brand add constraint pk_brand primary key (brandID);
+create table Product(
+	productID int not null,
+	productName nvarchar(50),
+	price numeric(10,2),
+	shortDescription nvarchar(1000),
+	detailDescription nvarchar(1000),
+	TypeID int not null,
+	BrandID int not null,
+	StoringStatus bit not null,
+
+);
+alter table product add constraint pk_product primary key (productID);
+alter table product add constraint fk_producttotype foreign key (typeid) references ProductType(typeID) on delete cascade on update cascade;
+alter table product add constraint fk_producttobrand foreign key (brandID) references brand(brandID) on delete cascade on update cascade;
+create table cartDetail(
+	productID int not null,
+	amount int default 0
+);
+alter table cartDetail add constraint fk_cartdetailtoproduct foreign key (productID) references product(productID)
+ on delete cascade on update cascade;
+
+
+create table Bill(
+	BillID int not null,
+	UserID int not null,
+	userAddress nvarchar(1000),
+	shipCost numeric(10,2),
+	dateBuy datetime,
+	BillToTal numeric(10,2)
+);
+alter table Bill add constraint pk_bill primary key (billID); 
+
+alter table Bill add constraint fk_billToUser foreign key (userid) references User(userid)
+on delete cascade
+on update cascade;
+create table BillDetail(
+	BillID int not null,
+	ProductID int not null,
+	amount int default 0
+);
+alter table BillDetail
+add constraint fk_billdetailtobill foreign key (Billid) references bill(billid)
+on delete cascade
+on update cascade
